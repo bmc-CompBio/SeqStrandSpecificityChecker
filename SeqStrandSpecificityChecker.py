@@ -41,6 +41,51 @@ def create_directory(directory_name):
     return os.path.abspath(directory_name)
 
 
+def get_extension(file_name):
+    """
+    Extracts and returns the file extension from a filename.
+
+    :param file_name: The input string from which to extract the extension.
+    :type file_name: str
+
+    :return: The file extension, excluding the period ('.').
+    :rtype: str
+
+    :raises ValueError: If the input string does not contain a period ('.').
+    """
+    last_dot_index = file_name.rfind(".")
+
+    if last_dot_index != -1:
+        extension = file_name[last_dot_index + 1:]
+        return extension
+    else:
+        raise ValueError("The input file is not in a correct format.")
+
+
+def create_sample_with_given_size(input_file_path, sample_size):
+    """
+    Create a sample file by extracting the first x lines from the input file.
+
+    :param input_file_path: The path to the input file to extract data from.
+    :type: str
+
+    :param sample_size: The number of lines that should be extracted from the input file.
+    :type: int
+
+    :return: The name of the created sample file.
+    :rtype: str
+    """
+    with open(input_file_path, 'r') as input_file:
+        extension = get_extension(input_file_path)
+        output_file_name = "sample" + extension
+        with open(output_file_name, 'w') as output_file:
+            for i, line in enumerate(input_file):
+                if i >= sample_size:
+                    break
+                output_file.write(line)
+        return output_file_name
+
+
 class SeqStrandSpecificityChecker:
 
     def __init__(self, bowtie2_directory, gene_seq, reference_genome):
@@ -54,8 +99,12 @@ class SeqStrandSpecificityChecker:
 
         self.index_reference_genome()
 
-        mapped_reads = self.run_bowtie2_alignment(self.bowtie2_directory,
-                                                  self.gene_seq)
+        sample_size = 100000
+        sample = create_sample_with_given_size(gene_seq, sample_size)
+
+        mapped_reads = self.run_bowtie2_alignment(self.bowtie2_directory, sample)
+
+        os.remove(sample)
 
         num_negative_reads, num_positive_reads = self.count_positve_and_negative_reads(mapped_reads)
 
@@ -174,3 +223,4 @@ class SeqStrandSpecificityChecker:
             return "negative"
         elif num_negative_reads == 0 and num_positive_reads > 0:
             return "positive"
+
