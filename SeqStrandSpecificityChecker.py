@@ -13,16 +13,16 @@ def check_file(path):
     :raises PermissionError: If there are permission issues when trying to open the file.
     """
     if not os.path.exists(path):
-        raise FileNotFoundError(f"The file {path} does not exist.")
+        raise FileNotFoundError("The file " + path + " does not exist. \n")
 
     if not os.path.isfile(path):
-        raise FileNotFoundError(f"The path {path} exists, but it is not a file.")
+        raise FileNotFoundError("The path " + path + " exists, but it is not a file. \n")
 
     try:
         with open(path, 'r') as file:
             pass
     except PermissionError as e:
-        raise PermissionError(f"Permission error while opening {path}: {e}")
+        raise PermissionError("Permission error while opening " + path + "\n")
 
 
 def create_directory(directory_name):
@@ -86,6 +86,34 @@ def create_sample_with_given_size(input_file_path, sample_size):
         return output_file_name
 
 
+def create_sample_with_given_size2(input_file_path, starting_from_line, sample_size):
+    """
+    Create a sample file by extracting the first x lines from the input file.
+
+    :param input_file_path: The path to the input file to extract data from.
+    :type: str
+
+    :param starting_from_line:
+    :type: int
+
+    :param sample_size: The number of lines that should be extracted from the input file.
+    :type: int
+
+    :return: The name of the created sample file.
+    :rtype: str
+    """
+    with open(input_file_path, 'r') as input_file:
+        extension = get_extension(input_file_path)
+        output_file_name = "sample" + extension
+        with open(output_file_name, 'w') as output_file:
+            for i, line in enumerate(input_file):
+                if i >= sample_size + starting_from_line:
+                    break
+                if i >= starting_from_line:
+                    output_file.write(line)
+        return output_file_name
+
+
 class SeqStrandSpecificityChecker:
 
     def __init__(self, bowtie2_directory, gene_seq, reference_genome):
@@ -112,12 +140,10 @@ class SeqStrandSpecificityChecker:
 
         end_result = self.evaluate_result(num_negative_reads, num_positive_reads)
 
-        print(end_result)
+        self.print_end_result(end_result, num_negative_reads, num_positive_reads)
 
     def index_reference_genome(self):
         """
-        Index the reference genome using Bowtie 2. And saves
-
         This function creates an index for a reference genome using Bowtie 2. The indexed files are
         generated in a newly made directory.
 
@@ -224,3 +250,31 @@ class SeqStrandSpecificityChecker:
         elif num_negative_reads == 0 and num_positive_reads > 0:
             return "positive"
 
+    def calculate_ratio(self, num_positive_reads, num_negative_reads):
+        """
+        Calculate the ratio of positive and negative reads in a dataset.
+
+        :param num_positive_reads: The number of positive reads in the dataset.
+        :type: int
+        :param num_negative_reads: The number of negative reads in the dataset.
+        :type: int
+
+        :return: portion_pos_reads: The ratio of positive reads to the total reads (rounded to 3 decimal places).
+        :rtype float
+        :return: portion_neg_reads: The ratio of negative reads to the total reads (rounded to 3 decimal places).
+        :rtype float
+        """
+        num_reads = num_positive_reads + num_negative_reads
+        portion_pos_reads = round(num_positive_reads / num_reads, 3)
+        portion_neg_reads = round(num_negative_reads / num_reads, 3)
+        return portion_pos_reads, portion_neg_reads
+
+    def print_end_result(self, end_result, num_negative_reads, num_positive_reads):
+        print("\n_________________________")
+        print("\nResult: " + end_result)
+
+        if end_result == "Unstranded":
+            portion_pos_reads, portion_neg_reads = self.calculate_ratio(num_negative_reads, num_positive_reads)
+            print("Ratio: " + str(portion_pos_reads) + " positive, " + str(portion_neg_reads) + " negantive")
+
+        print("\n\n")
