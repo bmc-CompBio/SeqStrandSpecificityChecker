@@ -12,3 +12,4 @@ if len(arguments) != 4 or arguments[1] != "checkStrandSpecificity":
 
 gene_seq, reference_genome = sys.argv[2], sys.argv[3]
 SeqStrandSpecificityChecker(gene_seq, reference_genome)
+
