@@ -116,8 +116,8 @@ def create_sample_with_given_size2(input_file_path, starting_from_line, sample_s
 
 class SeqStrandSpecificityChecker:
 
-    def __init__(self, bowtie2_directory, gene_seq, reference_genome):
-        self.bowtie2_directory = bowtie2_directory
+    def __init__(self, gene_seq, reference_genome):
+        self.bowtie2_directory = self.get_bowtie2_dir()
         self.gene_seq = gene_seq
         self.reference_genome = reference_genome
         self.name_index_dir = "index"
@@ -142,6 +142,15 @@ class SeqStrandSpecificityChecker:
 
         self.print_end_result(end_result, num_negative_reads, num_positive_reads)
 
+    def get_bowtie2_dir(self):
+        """
+            Retrieve the directory path of Bowtie 2 specified by the BT2_HOME environment variable.
+
+            :return: the path to the directory in which the bowtie2 executable is stored.
+        """
+        bowtie2_dir = subprocess.check_output('echo $BT2_HOME', shell=True, text=True).strip()
+        return bowtie2_dir
+
     def index_reference_genome(self):
         """
         This function creates an index for a reference genome using Bowtie 2. The indexed files are
@@ -154,7 +163,7 @@ class SeqStrandSpecificityChecker:
         os.chdir(index_dir)
 
         # Run the bowtie2-build command
-        subprocess.run([os.path.join(self.bowtie2_directory, "bowtie2-build"), self.reference_genome, "mouse"])
+        subprocess.run([self.bowtie2_directory + "/bowtie2-build", self.reference_genome, "mouse"])
 
         os.chdir("..")
 
