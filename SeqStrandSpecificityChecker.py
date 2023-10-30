@@ -287,3 +287,4 @@ class SeqStrandSpecificityChecker:
             print("Ratio: " + str(portion_pos_reads) + " positive, " + str(portion_neg_reads) + " negantive")
 
         print("\n\n")
+

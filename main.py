@@ -2,7 +2,6 @@
 
 from SeqStrandSpecificityChecker import SeqStrandSpecificityChecker
 
-import subprocess
 import sys
 
 arguments = sys.argv
