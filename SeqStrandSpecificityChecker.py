@@ -117,7 +117,6 @@ def create_sample_with_given_size2(input_file_path, starting_from_line, sample_s
 class SeqStrandSpecificityChecker:
 
     def __init__(self, gene_seq, reference_genome):
-        self.bowtie2_directory = self.get_bowtie2_dir()
         self.gene_seq = gene_seq
         self.reference_genome = reference_genome
         self.name_index_dir = "index"
@@ -163,20 +162,18 @@ class SeqStrandSpecificityChecker:
         os.chdir(index_dir)
 
         # Run the bowtie2-build command
-        subprocess.run([self.bowtie2_directory + "/bowtie2-build", self.reference_genome, "mouse"])
+        subprocess.run(["bowtie2-build", self.reference_genome, "mouse"])
 
         os.chdir("..")
 
         print("Bowtie 2 indexing completed.")
 
-    def run_bowtie2_alignment(self, bowtie2_directory, gene_seq):
+    def run_bowtie2_alignment(self, gene_seq):
         """
         This function performs an alignment using Bowtie 2 with a reference genome index that has to
         be previously created. The alignment results are saved in a SAM format file named "result.sam"
         in the current working directory.
 
-        :param bowtie2_directory: The path to the directory containing the Bowtie 2 executable.
-        :type bowtie2_directory: str
         :param gene_seq: The path to the gene sequence file to be aligned.
         :type gene_seq: str
 
@@ -189,7 +186,7 @@ class SeqStrandSpecificityChecker:
         with open(name_result_file, "w") as file:
             pass
 
-        bowtie2_command = (bowtie2_directory + "/bowtie2 -x " + self.name_index_dir + "/mouse" +
+        bowtie2_command = ("bowtie2 -x " + self.name_index_dir + "/mouse" +
                            " -U " + gene_seq + " -S " + name_result_file)
 
         try:
