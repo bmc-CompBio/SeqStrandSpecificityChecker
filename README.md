@@ -1,8 +1,6 @@
 # SeqStrandSpecificityChecker
 
-To ensure the program functions correctly, Bowtie2 must be installed, and the BT2_HOME environment variable
-must be configured as specified in the Bowtie2 manual, pointing to the new Bowtie 2 directory containing the
-bowtie2, bowtie2-build and bowtie2-inspect binaries.
+To ensure the program functions correctly, Bowtie2 must be installed.
 
 To run the program, simply execute the following command in your terminal:
 "/<SeqStrandSpecificityChecker_dir> checkStrandSpecificity <gene_seq> <reference_genome>"
@@ -16,6 +14,12 @@ The results should be printed out on your console.
 Example result:
 
 [...]
+100000 reads; of these:
+  100000 (100.00%) were unpaired; of these:
+    99887 (99.89%) aligned 0 times
+    113 (0.11%) aligned exactly 1 time
+    0 (0.00%) aligned >1 times
+0.11% overall alignment rate
 _________________________
 
 Result: Unstranded

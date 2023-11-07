@@ -126,10 +126,10 @@ class SeqStrandSpecificityChecker:
 
         self.index_reference_genome()
 
-        sample_size = 100000
+        sample_size = 1000000
         sample = create_sample_with_given_size(gene_seq, sample_size)
 
-        mapped_reads = self.run_bowtie2_alignment(self.bowtie2_directory, sample)
+        mapped_reads = self.run_bowtie2_alignment(sample)
 
         os.remove(sample)
 
@@ -162,11 +162,10 @@ class SeqStrandSpecificityChecker:
         os.chdir(index_dir)
 
         # Run the bowtie2-build command
-        subprocess.run(["bowtie2-build", self.reference_genome, "mouse"])
+        subprocess.run(["bowtie2-build", self.reference_genome, "mouse"], stdout=subprocess.DEVNULL)
 
         os.chdir("..")
 
-        print("Bowtie 2 indexing completed.")
 
     def run_bowtie2_alignment(self, gene_seq):
         """
