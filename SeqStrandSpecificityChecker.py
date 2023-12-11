@@ -126,7 +126,7 @@ class SeqStrandSpecificityChecker:
 
         self.index_reference_genome()
 
-        sample_size = 1000000
+        sample_size = 100000
         sample = create_sample_with_given_size(gene_seq, sample_size)
 
         mapped_reads = self.run_bowtie2_alignment(sample)
