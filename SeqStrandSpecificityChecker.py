@@ -276,7 +276,7 @@ class SeqStrandSpecificityChecker:
 
     def print_end_result(self, end_result, num_negative_reads, num_positive_reads):
         print("\n_________________________")
-        print("\nResult: " + end_result)
+        print("\nResult: " + str(end_result))
 
         if end_result == "Unstranded":
             portion_pos_reads, portion_neg_reads = self.calculate_ratio(num_negative_reads, num_positive_reads)
