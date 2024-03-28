@@ -137,7 +137,7 @@ class SeqStrandSpecificityChecker:
 
         os.remove(mapped_reads)
 
-        end_result = self.evaluate_result(num_negative_reads, num_positive_reads)
+        end_result = self.evaluate_result(self.calculate_ratio(num_positive_reads, num_negative_reads))
 
         self.print_end_result(end_result, num_negative_reads, num_positive_reads)
 
@@ -229,30 +229,30 @@ class SeqStrandSpecificityChecker:
                     paired_reads.append(line)
         return num_negative_reads, num_positive_reads
 
-    def evaluate_result(self, num_negative_reads, num_positive_reads):
+    def evaluate_result(self, portion_pos_reads, portion_neg_reads):
         """
         Evaluate the result of read alignments to determine the strand specificity.
 
-        This function takes the counts of negative and positive reads and evaluates the result to determine the strand
+        This function takes the ratio of negative and positive reads and evaluates the result to determine the strand
         specificity of the read alignments. It returns one of the following values:
 
-        - "Unstranded" if there are both negative and positive reads, indicating that the alignments are unstranded.
-        - "Negative" if there are only negative reads, indicating a preference for the negative strand.
-        - "Positive" if there are only positive reads, indicating a preference for the positive strand.
+        - "Negative" if there are more than 90 percent negative reads, indicating a preference for the negative strand.
+        - "Positive" if there are more than 90 percent positive reads, indicating a preference for the positive strand.
+        - "Unstranded" otherwise
 
-        :param num_negative_reads: The number of negative strand reads.
-        :type num_negative_reads: int
-        :param num_positive_reads: The number of positive strand reads.
-        :type num_positive_reads: int
+        :param portion_pos_reads: The ratio of positive reads to the total reads (rounded to 3 decimal places).
+        :type portion_pos_reads: float
+        :param portion_neg_reads: The ratio of negative reads to the total reads (rounded to 3 decimal places).
+        :type portion_neg_reads: float
 
         :return: A string indicating the strand specificity of the read alignments.
         :rtype: str
         """
-        if num_negative_reads > 0 and num_positive_reads > 0:
+        if portion_pos_reads < 0.9 and portion_neg_reads < 0.9:
             return "Unstranded"
-        elif num_negative_reads > 0 and num_positive_reads == 0:
+        elif portion_neg_reads >= 0.9 and portion_pos_reads <= 0.1:
             return "negative"
-        elif num_negative_reads == 0 and num_positive_reads > 0:
+        elif portion_neg_reads >= 0 and portion_pos_reads <= 0:
             return "positive"
 
     def calculate_ratio(self, num_positive_reads, num_negative_reads):
