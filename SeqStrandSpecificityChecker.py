@@ -137,7 +137,9 @@ class SeqStrandSpecificityChecker:
 
         os.remove(mapped_reads)
 
-        end_result = self.evaluate_result(self.calculate_ratio(num_positive_reads, num_negative_reads))
+        portion_pos_reads, portion_neg_reads = self.calculate_ratio(num_positive_reads, num_negative_reads)
+
+        end_result = self.evaluate_result(portion_pos_reads, portion_neg_reads)
 
         self.print_end_result(end_result, num_negative_reads, num_positive_reads)
 
