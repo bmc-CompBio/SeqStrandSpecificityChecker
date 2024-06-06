@@ -75,12 +75,14 @@ def create_sample_with_given_size(input_file_path, sample_size):
     :return: The name of the created sample file.
     :rtype: str
     """
+    LINES_PER_READ = 4
+
     with open(input_file_path, 'r') as input_file:
         extension = get_extension(input_file_path)
         output_file_name = "sample" + extension
         with open(output_file_name, 'w') as output_file:
             for i, line in enumerate(input_file):
-                if i >= sample_size:
+                if i >= sample_size * LINES_PER_READ:
                     break
                 output_file.write(line)
         return output_file_name
