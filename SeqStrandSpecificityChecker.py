@@ -256,7 +256,7 @@ class SeqStrandSpecificityChecker:
             return "Unstranded"
         elif portion_neg_reads >= 0.9 and portion_pos_reads <= 0.1:
             return "negative"
-        elif portion_neg_reads >= 0 and portion_pos_reads <= 0:
+        elif portion_neg_reads <= 0.1 and portion_pos_reads >= 0.9:
             return "positive"
 
     def calculate_ratio(self, num_positive_reads, num_negative_reads):
