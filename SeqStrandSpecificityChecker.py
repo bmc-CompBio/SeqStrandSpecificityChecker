@@ -145,6 +145,8 @@ class SeqStrandSpecificityChecker:
 
         self.print_end_result(end_result, num_negative_reads, num_positive_reads)
 
+        os.remove(self.name_index_dir)
+
     def get_bowtie2_dir(self):
         """
             Retrieve the directory path of Bowtie 2 specified by the BT2_HOME environment variable.
@@ -258,6 +260,8 @@ class SeqStrandSpecificityChecker:
             return "negative"
         elif portion_neg_reads <= 0.1 and portion_pos_reads >= 0.9:
             return "positive"
+        elif portion_neg_reads == 0 and portion_pos_reads == 0:
+            return "no result"
 
     def calculate_ratio(self, num_positive_reads, num_negative_reads):
         """
@@ -274,8 +278,13 @@ class SeqStrandSpecificityChecker:
         :rtype float
         """
         num_reads = num_positive_reads + num_negative_reads
-        portion_pos_reads = round(num_positive_reads / num_reads, 3)
-        portion_neg_reads = round(num_negative_reads / num_reads, 3)
+        if num_reads > 0:
+            portion_pos_reads = round(num_positive_reads / num_reads, 3)
+            portion_neg_reads = round(num_negative_reads / num_reads, 3)
+        else:
+            portion_pos_reads = 0
+            portion_neg_reads = 0
+
         return portion_pos_reads, portion_neg_reads
 
     def print_end_result(self, end_result, num_negative_reads, num_positive_reads):
