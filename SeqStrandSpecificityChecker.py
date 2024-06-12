@@ -254,14 +254,14 @@ class SeqStrandSpecificityChecker:
         :return: A string indicating the strand specificity of the read alignments.
         :rtype: str
         """
-        if portion_pos_reads < 0.9 and portion_neg_reads < 0.9:
+        if portion_neg_reads == 0 and portion_pos_reads == 0:
+            return "no result"
+        elif portion_pos_reads < 0.9 and portion_neg_reads < 0.9:
             return "Unstranded"
         elif portion_neg_reads >= 0.9 and portion_pos_reads <= 0.1:
             return "negative"
         elif portion_neg_reads <= 0.1 and portion_pos_reads >= 0.9:
             return "positive"
-        elif portion_neg_reads == 0 and portion_pos_reads == 0:
-            return "no result"
 
     def calculate_ratio(self, num_positive_reads, num_negative_reads):
         """
