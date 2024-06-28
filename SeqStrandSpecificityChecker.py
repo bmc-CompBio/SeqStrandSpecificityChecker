@@ -118,7 +118,7 @@ def create_sample_with_given_size2(input_file_path, starting_from_line, sample_s
 
 class SeqStrandSpecificityChecker:
 
-    def __init__(self, gene_seq, reference_genome):
+    def __init__(self, gene_seq, reference_genome, sample_size=100000):
         self.gene_seq = gene_seq
         self.reference_genome = reference_genome
         self.name_index_dir = "index"
@@ -128,7 +128,6 @@ class SeqStrandSpecificityChecker:
 
         self.index_reference_genome()
 
-        sample_size = 100000
         sample = create_sample_with_given_size(gene_seq, sample_size)
 
         mapped_reads = self.run_bowtie2_alignment(sample)
