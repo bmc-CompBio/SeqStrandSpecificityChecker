@@ -145,8 +145,6 @@ class SeqStrandSpecificityChecker:
 
         self.print_end_result(end_result, num_negative_reads, num_positive_reads)
 
-        os.remove(self.name_index_dir)
-
     def get_bowtie2_dir(self):
         """
             Retrieve the directory path of Bowtie 2 specified by the BT2_HOME environment variable.
@@ -171,7 +169,6 @@ class SeqStrandSpecificityChecker:
         subprocess.run(["bowtie2-build", self.reference_genome, "mouse"], stdout=subprocess.DEVNULL)
 
         os.chdir("..")
-
 
     def run_bowtie2_alignment(self, gene_seq):
         """
@@ -242,8 +239,8 @@ class SeqStrandSpecificityChecker:
         This function takes the ratio of negative and positive reads and evaluates the result to determine the strand
         specificity of the read alignments. It returns one of the following values:
 
-        - "Negative" if there are more than 90 percent negative reads, indicating a preference for the negative strand.
-        - "Positive" if there are more than 90 percent positive reads, indicating a preference for the positive strand.
+        - "Negative" if there are more than 80 percent negative reads, indicating a preference for the negative strand.
+        - "Positive" if there are more than 80 percent positive reads, indicating a preference for the positive strand.
         - "Unstranded" otherwise
 
         :param portion_pos_reads: The ratio of positive reads to the total reads (rounded to 3 decimal places).
@@ -254,13 +251,15 @@ class SeqStrandSpecificityChecker:
         :return: A string indicating the strand specificity of the read alignments.
         :rtype: str
         """
+        classificationThreshold = 0.8
+
         if portion_neg_reads == 0 and portion_pos_reads == 0:
-            return "no result"
-        elif portion_pos_reads < 0.9 and portion_neg_reads < 0.9:
+            return "no_result"
+        elif portion_pos_reads < classificationThreshold and portion_neg_reads < classificationThreshold:
             return "Unstranded"
-        elif portion_neg_reads >= 0.9 and portion_pos_reads <= 0.1:
+        elif portion_neg_reads >= classificationThreshold and portion_pos_reads <= 1 - classificationThreshold:
             return "negative"
-        elif portion_neg_reads <= 0.1 and portion_pos_reads >= 0.9:
+        elif portion_neg_reads <= 1 - classificationThreshold and portion_pos_reads >= classificationThreshold:
             return "positive"
 
     def calculate_ratio(self, num_positive_reads, num_negative_reads):
